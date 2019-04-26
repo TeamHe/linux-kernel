@@ -612,6 +612,9 @@ out_unlock:
 	if (trigger)
 		phy_trigger_machine(phydev, sync);
 
+	if(err != 0)
+		dev_info(&phydev->mdio.dev,"phy start aneg faile\n");
+
 	return err;
 }
 
@@ -662,6 +665,7 @@ void phy_trigger_machine(struct phy_device *phydev, bool sync)
 	else
 		cancel_delayed_work(&phydev->state_queue);
 	queue_delayed_work(system_power_efficient_wq, &phydev->state_queue, 0);
+	dev_info(&phydev->mdio.dev,"phy trigger machine");
 }
 
 /**
@@ -724,7 +728,7 @@ static irqreturn_t phy_interrupt(int irq, void *phy_dat)
 	atomic_inc(&phydev->irq_disable);
 
 	queue_work(system_power_efficient_wq, &phydev->phy_queue);
-
+//	dev_info(&phydev->mdio.dev,"phy receive interrupt");
 	return IRQ_HANDLED;
 }
 
@@ -857,7 +861,7 @@ void phy_change(struct work_struct *work)
 		    phy_config_interrupt(phydev, PHY_INTERRUPT_ENABLED))
 			goto irq_enable_err;
 	}
-
+	dev_info(&phydev->mdio.dev,"phy change\n");
 	/* reschedule state queue work to run as soon as possible */
 	phy_trigger_machine(phydev, true);
 	return;
@@ -948,8 +952,9 @@ void phy_start(struct phy_device *phydev)
 	/* if phy was suspended, bring the physical link up again */
 	if (do_resume)
 		phy_resume(phydev);
-
 	phy_trigger_machine(phydev, true);
+	dev_info(&phydev->mdio.dev,"phy start state: %s\n",
+			phy_state_to_str(phydev->state));
 }
 EXPORT_SYMBOL(phy_start);
 
@@ -967,6 +972,9 @@ void phy_state_machine(struct work_struct *work)
 	int err = 0;
 	int old_link;
 
+//	if(phydev->phy_id == 0x221556)
+//		dev_info(&phydev->mdio.dev, "phy_sate_machine in\n");
+	
 	mutex_lock(&phydev->lock);
 
 	old_state = phydev->state;
@@ -1157,6 +1165,10 @@ void phy_state_machine(struct work_struct *work)
 	phydev_dbg(phydev, "PHY state change %s -> %s\n",
 		   phy_state_to_str(old_state),
 		   phy_state_to_str(phydev->state));
+	if(phydev->phy_id == 0x221556)
+	dev_info(&phydev->mdio.dev, "PHY state change %s -> %s\n",
+		   phy_state_to_str(old_state),
+		   phy_state_to_str(phydev->state));
 
 	/* Only re-schedule a PHY state machine change if we are polling the
 	 * PHY, if PHY_IGNORE_INTERRUPT is set, then we will be moving
@@ -1165,12 +1177,15 @@ void phy_state_machine(struct work_struct *work)
 	if (phydev->irq == PHY_POLL)
 		queue_delayed_work(system_power_efficient_wq, &phydev->state_queue,
 				   PHY_STATE_TIME * HZ);
+	else
+		dev_info(&phydev->mdio.dev, "phy state machine no PHY_POLL\n");
+
 }
 
 void phy_mac_interrupt(struct phy_device *phydev, int new_link)
 {
 	phydev->link = new_link;
-
+	dev_info(&phydev->mdio.dev,"phy mac interrupt \n");
 	/* Trigger a state machine change */
 	queue_work(system_power_efficient_wq, &phydev->phy_queue);
 }

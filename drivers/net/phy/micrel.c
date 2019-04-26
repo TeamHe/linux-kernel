@@ -151,6 +151,7 @@ static int kszphy_ack_interrupt(struct phy_device *phydev)
 	int rc;
 
 	rc = phy_read(phydev, MII_KSZPHY_INTCS);
+	dev_info(&phydev->mdio.dev,"kszphy ack interrupt");
 
 	return (rc < 0) ? rc : 0;
 }
@@ -278,7 +279,7 @@ static int kszphy_config_init(struct phy_device *phydev)
 		return 0;
 
 	type = priv->type;
-
+	
 	if (type->has_broadcast_disable)
 		kszphy_broadcast_disable(phydev);
 
@@ -307,7 +308,18 @@ static int kszphy_config_init(struct phy_device *phydev)
 		if (ret < 0)
 			return ret;
 	}
-
+	dev_info(&phydev->mdio.dev,"kszphy config init. broadcast_disable:%d "
+			"nand_tree_disable:%d "
+			"rmill_clk_sel:%d "
+			"led mode:%d "
+			"interrupt enable:%d "
+			"\n",
+			type->has_broadcast_disable,
+			type->has_nand_tree_disable,
+			priv->rmii_ref_clk_sel,
+			priv->led_mode,
+			phy_interrupt_is_valid(phydev)
+			);
 	return 0;
 }
 
@@ -688,7 +700,8 @@ static u64 kszphy_get_stat(struct phy_device *phydev, int i)
 		priv->stats[i] += val;
 		ret = priv->stats[i];
 	}
-
+	dev_info(&phydev->mdio.dev, "kszphy stat %d val:%d\n",
+			i,ret);
 	return ret;
 }
 
@@ -784,7 +797,9 @@ static int kszphy_probe(struct phy_device *phydev)
 		priv->rmii_ref_clk_sel = true;
 		priv->rmii_ref_clk_sel_val = true;
 	}
-
+	dev_info(&phydev->mdio.dev,"kszphy probe ledmode:%d \n",
+			priv->led_mode
+			);
 	return 0;
 }
 
@@ -826,25 +841,25 @@ static struct phy_driver ksphy_driver[] = {
 	.suspend	= genphy_suspend,
 	.resume		= genphy_resume,
 }, {
-	.phy_id		= PHY_ID_KSZ8031,
-	.phy_id_mask	= 0x00ffffff,
-	.name		= "Micrel KSZ8031",
-	.features	= (PHY_BASIC_FEATURES | SUPPORTED_Pause |
-			   SUPPORTED_Asym_Pause),
-	.flags		= PHY_HAS_MAGICANEG | PHY_HAS_INTERRUPT,
-	.driver_data	= &ksz8021_type,
-	.probe		= kszphy_probe,
-	.config_init	= kszphy_config_init,
-	.config_aneg	= genphy_config_aneg,
-	.read_status	= genphy_read_status,
-	.ack_interrupt	= kszphy_ack_interrupt,
-	.config_intr	= kszphy_config_intr,
-	.get_sset_count = kszphy_get_sset_count,
-	.get_strings	= kszphy_get_strings,
-	.get_stats	= kszphy_get_stats,
-	.suspend	= genphy_suspend,
-	.resume		= genphy_resume,
-}, {
+//	.phy_id		= PHY_ID_KSZ8031,
+//	.phy_id_mask	= 0x00ffffff,
+//	.name		= "Micrel KSZ8031",
+//	.features	= (PHY_BASIC_FEATURES | SUPPORTED_Pause |
+//			   SUPPORTED_Asym_Pause),
+//	.flags		= PHY_HAS_MAGICANEG | PHY_HAS_INTERRUPT,
+//	.driver_data	= &ksz8021_type,
+//	.probe		= kszphy_probe,
+//	.config_init	= kszphy_config_init,
+//	.config_aneg	= genphy_config_aneg,
+//	.read_status	= genphy_read_status,
+//	.ack_interrupt	= kszphy_ack_interrupt,
+//	.config_intr	= kszphy_config_intr,
+//	.get_sset_count = kszphy_get_sset_count,
+//	.get_strings	= kszphy_get_strings,
+//	.get_stats	= kszphy_get_stats,
+//	.suspend	= genphy_suspend,
+//	.resume		= genphy_resume,
+//}, {
 	.phy_id		= PHY_ID_KSZ8041,
 	.phy_id_mask	= MICREL_PHY_ID_MASK,
 	.name		= "Micrel KSZ8041",
@@ -1045,7 +1060,7 @@ static struct mdio_device_id __maybe_unused micrel_tbl[] = {
 	{ PHY_ID_KSZ8001, 0x00fffffc },
 	{ PHY_ID_KS8737, MICREL_PHY_ID_MASK },
 	{ PHY_ID_KSZ8021, 0x00ffffff },
-	{ PHY_ID_KSZ8031, 0x00ffffff },
+//	{ PHY_ID_KSZ8031, 0x00ffffff },
 	{ PHY_ID_KSZ8041, MICREL_PHY_ID_MASK },
 	{ PHY_ID_KSZ8051, MICREL_PHY_ID_MASK },
 	{ PHY_ID_KSZ8061, MICREL_PHY_ID_MASK },

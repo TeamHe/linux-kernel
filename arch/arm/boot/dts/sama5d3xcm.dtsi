@@ -80,10 +80,148 @@
 	leds {
 		compatible = "gpio-leds";
 
-		d2 {
-			label = "d2";
-			gpios = <&pioE 25 GPIO_ACTIVE_LOW>;	/* PE25, conflicts with A25, RXD2 */
+		/*
+		 * cled1 does not controlled. It indicate the powered state. 
+		 */
+
+		cled2 {
+			label = "Status";
+			gpios = <&pioD 31 GPIO_ACTIVE_HIGH>;	/* PD31 LED-18*/
 			linux,default-trigger = "heartbeat";
 		};
+
+		cled3 {
+			label = "cled3";
+			gpios = <&pioD 30 GPIO_ACTIVE_HIGH>; 	/*PD30 LED-19*/
+			default-state = "off";	
+		};
+
+		cled4 {
+			label = "cled4";
+			gpios = <&pioD 29 GPIO_ACTIVE_HIGH>; 	/*PD29 LED-20*/
+			default-state = "off";	
+		};
+
+		cled5 {
+			label = "cled5";
+			gpios = <&pioD 28 GPIO_ACTIVE_HIGH>; 	/*PD28 LED-21*/
+			default-state = "off";	
+		};
+		
+		cled6 {
+			label = "cled6";
+			gpios = <&pioD 27 GPIO_ACTIVE_HIGH>; 	/*PD27 LED-22*/
+			default-state = "off";	
+		};
+
+		cled7 {
+			label = "cled7";
+			gpios = <&pioD 26 GPIO_ACTIVE_HIGH>; 	/*PD26 LED-23*/
+			default-state = "off";	
+		};
+
+		cled8 {
+			label = "cled8";
+			gpios = <&pioD 22 GPIO_ACTIVE_HIGH>; 	/*PD22 LED-24*/
+			default-state = "off";	
+		};
 	};
+
+
+	do {
+		compatible = "gpio-leds";
+		do1 {
+			label = "do1";
+			gpios = <&pioC 13 GPIO_ACTIVE_HIGH>; 	/*PC13 LED-9*/
+			default-state = "off";	
+		};
+		
+		do2 {
+			label = "do2";
+			gpios = <&pioA 13 GPIO_ACTIVE_HIGH>; 	/*PA13 LED-10*/
+			default-state = "off";	
+		};
+
+		do3 {
+			label = "do3";
+			gpios = <&pioA 12 GPIO_ACTIVE_HIGH>; 	/*PA12 LED-11*/
+			default-state = "off";	
+		};
+
+		do4 {
+			label = "do4";
+			gpios = <&pioA 11 GPIO_ACTIVE_HIGH>; 	/*PA11 LED-12*/
+			default-state = "off";	
+		};
+
+		do5 {
+			label = "do5";
+			gpios = <&pioA 10 GPIO_ACTIVE_HIGH>; 	/*PA10 LED-13*/
+			default-state = "off";	
+		};
+
+		do6 {
+			label = "do6";
+			gpios = <&pioA 9 GPIO_ACTIVE_HIGH>; 	/*PA9 LED-14*/
+			default-state = "off";	
+		};
+
+		do7 {
+			label = "do7";
+			gpios = <&pioA 1 GPIO_ACTIVE_HIGH>; 	/*PA1 LED-15*/
+			default-state = "off";	
+		};
+
+		do8 {
+			label = "do8";
+			gpios = <&pioA 0 GPIO_ACTIVE_HIGH>; 	/*PA0 LED-16*/
+			default-state = "off";	
+		};
+	};
+
+	rs485c{
+		compatible = "gpio-leds";
+
+		cs1 {
+			label = "c2";
+			gpios = <&pioD 16 GPIO_ACTIVE_HIGH>; 	/*PD16 RS485-2 control*/
+			default-state = "off";	
+		};
+
+		cs3 {
+			label = "c3";
+			gpios = <&pioE 24 GPIO_ACTIVE_HIGH>; 	/*PE24 RS485-3 control*/
+			default-state = "off";	
+		};
+
+		cs4 {
+			label = "c4";
+			gpios = <&pioE 17 GPIO_ACTIVE_HIGH>; 	/*PE17 RS485-4 control*/
+			default-state = "off";	
+		};
+
+		cs6 {
+			label = "c1";
+			gpios = <&pioA 17 GPIO_ACTIVE_HIGH>; 	/*PA17 RS485-1 control*/
+			default-state = "off";	
+		};
+
+	};
+
+	beeper{
+		compatible = "gpio-leds";
+		beep {
+			label = "beep";
+			gpios = <&pioE 23 GPIO_ACTIVE_HIGH>;		
+			default-state = "off";	
+		};
+
+		pwgprs {
+			label = "pw-4g";
+			gpios = <&pioA 20 GPIO_ACTIVE_LOW>;		
+			default-state = "on";	
+		};
+	};
+
+
 };

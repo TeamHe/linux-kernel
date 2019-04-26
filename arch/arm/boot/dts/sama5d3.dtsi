@@ -27,6 +27,7 @@
 		serial3 = &usart2;
 		serial4 = &usart3;
 		serial5 = &uart0;
+		serial6 = &uart1;
 		gpio0 = &pioA;
 		gpio1 = &pioB;
 		gpio2 = &pioC;

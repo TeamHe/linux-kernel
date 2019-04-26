@@ -808,6 +808,9 @@ static int gem_rx(struct macb *bp, int budget)
 	struct macb_dma_desc	*desc;
 	int			count = 0;
 
+	struct net_device *dev = bp->dev;
+	if(dev->name[3]=='1')
+	pr_info("%s read data",dev->name);
 	while (count < budget) {
 		u32 ctrl;
 		dma_addr_t addr;
@@ -874,6 +877,12 @@ static int gem_rx(struct macb *bp, int budget)
 			       skb->data, 32, true);
 #endif
 
+		if(dev->name[3]=='1')
+		{
+			print_hex_dump(KERN_INFO,"eth0 receive data: ",DMA_FROM_DEVICE,16,1,
+				skb->data,32,true);
+
+		}
 		netif_receive_skb(skb);
 	}
 
@@ -958,6 +967,8 @@ static int macb_rx_frame(struct macb *bp, unsigned int first_frag,
 	bp->stats.rx_bytes += skb->len;
 	netdev_vdbg(bp->dev, "received skb of length %u, csum: %08x\n",
 		    skb->len, skb->csum);
+	print_hex_dump(KERN_INFO,"eth1 receive data: ",DMA_FROM_DEVICE,16,1,
+		skb->data,skb->len,true);
 	netif_receive_skb(skb);
 
 	return 0;
@@ -1095,7 +1106,10 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
 	u32 status, ctrl;
 
 	status = queue_readl(queue, ISR);
-
+	
+	if(dev->name[3]=='1')
+		pr_info("macb interrupt receive name:%s\n",dev->name);
+//		dump_stack();
 	if (unlikely(!status))
 		return IRQ_NONE;
 
@@ -1127,6 +1141,8 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
 
 			if (napi_schedule_prep(&bp->napi)) {
 				netdev_vdbg(bp->dev, "scheduling RX softirq\n");
+				if(dev->name[3]=='1')
+					pr_info("name:%s\n",dev->name);
 				__napi_schedule(&bp->napi);
 			}
 		}
@@ -1139,7 +1155,7 @@ static irqreturn_t macb_interrupt(int irq, void *dev_id)
 				queue_writel(queue, ISR, MACB_TX_ERR_FLAGS);
 
 			break;
-		}
+		}	
 
 		if (status & MACB_BIT(TCOMP))
 			macb_tx_interrupt(queue);
@@ -1366,6 +1382,13 @@ static int macb_start_xmit(struct sk_buff *skb, struct net_device *dev)
 	struct macb_queue *queue = &bp->queues[queue_index];
 	unsigned long flags;
 	unsigned int count, nr_frags, frag_size, f;
+	if(dev->name[3]=='1')
+	{
+		pr_info("macb start %s send data\n",dev->name);
+		print_hex_dump(KERN_INFO, "send data: ", DUMP_PREFIX_ADDRESS, 16, 1,
+			       skb->data, skb->len, true);
+
+	}
 
 #if defined(DEBUG) && defined(VERBOSE_DEBUG)
 	netdev_vdbg(bp->dev,
@@ -2708,6 +2731,10 @@ static int at91ether_close(struct net_device *dev)
 static int at91ether_start_xmit(struct sk_buff *skb, struct net_device *dev)
 {
 	struct macb *lp = netdev_priv(dev);
+
+	pr_info("at91ether %s send data\n",dev->name);
+	print_hex_dump(KERN_INFO, "send data: ", DUMP_PREFIX_ADDRESS, 16, 1,
+			       skb->data, skb->len, true);
 
 	if (macb_readl(lp, TSR) & MACB_BIT(RM9200_BNQ)) {
 		netif_stop_queue(dev);

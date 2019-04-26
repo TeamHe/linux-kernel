@@ -14,14 +14,13 @@
 	ahb {
 		apb {
 			mmc0: mmc@f0000000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_mmc0_cd>;
 				status = "okay";
+
 				slot@0 {
 					reg = <0>;
-					bus-width = <4>;
-					cd-gpios = <&pioD 17 GPIO_ACTIVE_HIGH>;
+					bus-width = <8>;
 				};
+
 			};
 
 			spi0: spi@f0004000 {
@@ -74,13 +73,32 @@
 					};
 				};
 			};
+			
+					  
+			uart0: serial@f0024000 {
+				status = "okay";			
+			};
+
+			uart1: serial@f8028000 {
+				status = "okay";			
+			};
+
+			usart0: serial@f001c000 {
+				status = "okay";			
+			};
 
 			usart1: serial@f0020000 {
-				dmas = <0>, <0>;	/*  Do not use DMA for usart1 */
-				pinctrl-names = "default";
-				pinctrl-0 = <&pinctrl_usart1 &pinctrl_usart1_rts_cts>;
+				status = "okay";			
+			};
+
+			usart2: serial@f8020000 {
 				status = "okay";
 			};
+			usart3: serial@f8024000 {
+				status = "okay";
+			};
+			
+
 
 			isi: isi@f0034000 {
 				port {
@@ -92,7 +110,7 @@
 					};
 				};
 			};
-
+/*
 			mmc1: mmc@f8000000 {
 				pinctrl-names = "default";
 				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3 &pinctrl_mmc1_cd>;
@@ -103,19 +121,7 @@
 					cd-gpios = <&pioD 18 GPIO_ACTIVE_HIGH>;
 				};
 			};
-
-			adc0: adc@f8018000 {
-				pinctrl-names = "default";
-				pinctrl-0 = <
-					&pinctrl_adc0_adtrg
-					&pinctrl_adc0_ad0
-					&pinctrl_adc0_ad1
-					&pinctrl_adc0_ad2
-					&pinctrl_adc0_ad3
-					&pinctrl_adc0_ad4
-					>;
-				status = "okay";
-			};
+*/
 
 			pinctrl@fffff200 {
 				board {
@@ -151,7 +157,7 @@
 
 					pinctrl_usba_vbus: usba_vbus {
 						atmel,pins =
-							<AT91_PIOD 29 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>; /* PD29 GPIO with deglitch */
+							<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>; /* PD29 GPIO with deglitch */
 					};
 				};
 			};
@@ -167,7 +173,7 @@
 		};
 
 		usb0: gadget@00500000 {
-			atmel,vbus-gpio = <&pioD 29 GPIO_ACTIVE_HIGH>;
+			atmel,vbus-gpio = <&pioE 31 GPIO_ACTIVE_HIGH>;
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_usba_vbus>;
 			status = "okay";
@@ -175,18 +181,20 @@
 
 		usb1: ohci@00600000 {
 			num-ports = <3>;
-			atmel,vbus-gpio = <&pioD 25 GPIO_ACTIVE_HIGH
-					   &pioD 26 GPIO_ACTIVE_LOW
-					   &pioD 27 GPIO_ACTIVE_LOW
+			atmel,vbus-gpio = <0
+						0
+					   0
 					  >;
 			status = "okay";
 		};
-
+/*
+					  &pioA 20 GPIO_ACTIVE_LOW 
+ */
 		usb2: ehci@00700000 {
 			status = "okay";
 		};
 	};
-
+/*
 	sound {
 		compatible = "atmel,asoc-wm8904";
 		pinctrl-names = "default";
@@ -205,5 +213,7 @@
 		atmel,audio-codec = <&wm8904>;
 
 		status = "disabled";
+
 	};
+*/
 };

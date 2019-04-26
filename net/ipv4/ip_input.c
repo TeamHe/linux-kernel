@@ -414,8 +414,12 @@ int ip_rcv(struct sk_buff *skb, struct net_device *dev, struct packet_type *pt, 
 	 */
 	if (skb->pkt_type == PACKET_OTHERHOST)
 		goto drop;
-
-
+	//ip rcv
+	if(dev->name[3]=='1')
+	{
+		pr_info("eth1 receive ip packet\n");
+//		dump_stack();
+	}
 	net = dev_net(dev);
 	__IP_UPD_PO_STATS(net, IPSTATS_MIB_IN, skb->len);
 

@@ -3507,6 +3507,7 @@ int weight_p __read_mostly = 64;            /* old backlog weight */
 static inline void ____napi_schedule(struct softnet_data *sd,
 				     struct napi_struct *napi)
 {
+//	dump_stack();
 	list_add_tail(&napi->poll_list, &sd->poll_list);
 	__raise_softirq_irqoff(NET_RX_SOFTIRQ);
 }
@@ -3725,6 +3726,7 @@ static void rps_trigger_softirq(void *data)
  */
 static int rps_ipi_queued(struct softnet_data *sd)
 {
+//	dump_stack();
 #ifdef CONFIG_RPS
 	struct softnet_data *mysd = this_cpu_ptr(&softnet_data);
 
@@ -3880,7 +3882,8 @@ static int netif_rx_internal(struct sk_buff *skb)
 int netif_rx(struct sk_buff *skb)
 {
 	trace_netif_rx_entry(skb);
-
+//	dump_stack();
+//	pr_alert("netif rx receive data\n");
 	return netif_rx_internal(skb);
 }
 EXPORT_SYMBOL(netif_rx);
@@ -3896,6 +3899,8 @@ int netif_rx_ni(struct sk_buff *skb)
 	if (local_softirq_pending())
 		do_softirq();
 	preempt_enable();
+
+	pr_info("netif_rx_ni receive data\n");
 
 	return err;
 }
@@ -5279,6 +5284,7 @@ static __latent_entropy void net_rx_action(struct softirq_action *h)
 	list_splice_init(&sd->poll_list, &list);
 	local_irq_enable();
 
+//	dump_stack();
 	for (;;) {
 		struct napi_struct *n;
 
@@ -5289,6 +5295,9 @@ static __latent_entropy void net_rx_action(struct softirq_action *h)
 		}
 
 		n = list_first_entry(&list, struct napi_struct, poll_list);
+//		struct net_device *dev  = n->dev;
+//		if(n->dev->name[3]=='1')
+//		pr_info("net if action %s",n->dev->name);
 		budget -= napi_poll(n, &repoll);
 
 		/* If softirq window is exhausted then punt.

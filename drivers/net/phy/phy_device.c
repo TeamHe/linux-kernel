@@ -537,7 +537,7 @@ struct phy_device *get_phy_device(struct mii_bus *bus, int addr, bool is_c45)
 	/* If the phy_id is mostly Fs, there is no device there */
 	if ((phy_id & 0x1fffffff) == 0x1fffffff)
 		return ERR_PTR(-ENODEV);
-
+//	pr_info("ethernet---------------------------------------------------------- get phy id: %x\n",phy_id);	
 	return phy_device_create(bus, addr, phy_id, is_c45, &c45_ids);
 }
 EXPORT_SYMBOL(get_phy_device);
@@ -692,6 +692,8 @@ int phy_connect_direct(struct net_device *dev, struct phy_device *phydev,
 	if (phydev->irq > 0)
 		phy_start_interrupts(phydev);
 
+//	dev_info(&phydev->mdio.dev,"phy connect success");
+//	dump_stack();
 	return 0;
 }
 EXPORT_SYMBOL(phy_connect_direct);
@@ -728,12 +730,12 @@ struct phy_device *phy_connect(struct net_device *dev, const char *bus_id,
 		return ERR_PTR(-ENODEV);
 	}
 	phydev = to_phy_device(d);
-
 	rc = phy_connect_direct(dev, phydev, handler, interface);
 	put_device(d);
+	dev_info(&phydev->mdio.dev,"phy connect \n");
 	if (rc)
 		return ERR_PTR(rc);
-
+//	dev_info(&phydev->mdio.dev,"phy connect success\n");
 	return phydev;
 }
 EXPORT_SYMBOL(phy_connect);
@@ -825,17 +827,19 @@ void phy_attached_info(struct phy_device *phydev)
 }
 EXPORT_SYMBOL(phy_attached_info);
 
-#define ATTACHED_FMT "attached PHY driver [%s] (mii_bus:phy_addr=%s, irq=%d)"
+#define ATTACHED_FMT "attached PHY[%x] driver [%s] (mii_bus:phy_addr=%s, irq=%d)"
 void phy_attached_print(struct phy_device *phydev, const char *fmt, ...)
 {
 	if (!fmt) {
 		dev_info(&phydev->mdio.dev, ATTACHED_FMT "\n",
+			 phydev->phy_id,
 			 phydev->drv->name, phydev_name(phydev),
 			 phydev->irq);
 	} else {
 		va_list ap;
 
 		dev_info(&phydev->mdio.dev, ATTACHED_FMT,
+			 phydev->phy_id,
 			 phydev->drv->name, phydev_name(phydev),
 			 phydev->irq);
 

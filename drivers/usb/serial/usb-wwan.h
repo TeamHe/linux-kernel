@@ -30,6 +30,7 @@ extern int usb_wwan_resume(struct usb_serial *serial);
 #define N_OUT_URB 4
 #define IN_BUFLEN 4096
 #define OUT_BUFLEN 4096
+#define HW_bcdUSB 0x0110
 
 struct usb_wwan_intf_private {
 	spinlock_t susp_lock;

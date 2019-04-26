@@ -18,7 +18,7 @@
 				ethernet-phy@1 {
 					reg = <0x1>;
 					interrupt-parent = <&pioB>;
-					interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
+					interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
 					txen-skew-ps = <800>;
 					txc-skew-ps = <3000>;
 					rxdv-skew-ps = <400>;
@@ -32,7 +32,7 @@
 				ethernet-phy@7 {
 					reg = <0x7>;
 					interrupt-parent = <&pioB>;
-					interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
+					interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
 					txen-skew-ps = <800>;
 					txc-skew-ps = <3000>;
 					rxdv-skew-ps = <400>;
